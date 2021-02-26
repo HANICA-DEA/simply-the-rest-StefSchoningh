@@ -2,11 +2,14 @@ package nl.han.dea;
 
 import nl.han.dea.services.ItemService;
 import nl.han.dea.services.dto.ItemDTO;
+import nl.han.dea.services.exceptions.IdAlreadyInUseException;
+import nl.han.dea.services.exceptions.ItemNotAvailableException;
 
 import javax.ejb.Singleton;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.Arrays;
 
 @Path("/items")
 @Singleton
@@ -41,16 +44,25 @@ public class ItemResource {
     @Path("/{item_id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response itemAsJson(@PathParam("item_id") int itemId) {
-        return Response.ok(itemService.getItem(itemId)).build();
+        try {
+            return Response.ok(itemService.getItem(itemId)).build();
+        } catch (ItemNotAvailableException e){
+            System.out.println(Arrays.toString(e.getStackTrace()));
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
     }
 
     @POST
     @Path("/")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response newItem(ItemDTO item){
-        System.out.println(item);
-        itemService.addItem(item);
-        return Response.status(Response.Status.CREATED).build();
+        try{
+            itemService.addItem(item);
+            return Response.status(Response.Status.CREATED).build();
+        } catch (IdAlreadyInUseException e) {
+            System.out.println(Arrays.toString(e.getStackTrace()));
+            return Response.status(Response.Status.CONFLICT).build();
+        }
     }
 
 }
