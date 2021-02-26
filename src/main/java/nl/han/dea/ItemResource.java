@@ -65,4 +65,15 @@ public class ItemResource {
         }
     }
 
+    @DELETE
+    @Path("/{item_id}")
+    public Response deleteItem(@PathParam("item_id") int itemId) {
+        try {
+            itemService.deleteItem(itemId);
+            return Response.status(Response.Status.OK).build();
+
+        } catch (ItemNotAvailableException e) {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
+    }
 }
