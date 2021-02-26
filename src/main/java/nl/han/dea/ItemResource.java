@@ -3,14 +3,13 @@ package nl.han.dea;
 import nl.han.dea.services.ItemService;
 import nl.han.dea.services.dto.ItemDTO;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
+import javax.ejb.Singleton;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 @Path("/items")
+@Singleton
 public class ItemResource {
 
     private ItemService itemService;
@@ -44,4 +43,14 @@ public class ItemResource {
     public Response itemAsJson(@PathParam("item_id") int itemId) {
         return Response.ok(itemService.getItem(itemId)).build();
     }
+
+    @POST
+    @Path("/")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response newItem(ItemDTO item){
+        System.out.println(item);
+        itemService.addItem(item);
+        return Response.status(Response.Status.CREATED).build();
+    }
+
 }
