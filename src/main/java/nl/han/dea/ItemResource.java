@@ -44,12 +44,7 @@ public class ItemResource {
     @Path("/{item_id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response itemAsJson(@PathParam("item_id") int itemId) {
-        try {
             return Response.ok(itemService.getItem(itemId)).build();
-        } catch (ItemNotAvailableException e){
-            System.out.println(Arrays.toString(e.getStackTrace()));
-            return Response.status(Response.Status.NOT_FOUND).build();
-        }
     }
 
     @POST
